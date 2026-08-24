@@ -18,6 +18,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://amabay-place.brahimsemlali.chatgpt.site"),
   title: "AMABAY PLACE — Là où la vie prend forme",
   description:
     "Une nouvelle destination à Casablanca dédiée à la maison, au design, au lifestyle, à la restauration et aux nouvelles expériences.",
@@ -27,6 +28,7 @@ export const metadata: Metadata = {
       "Une nouvelle destination à Casablanca dédiée à la maison, au design, au lifestyle, à la restauration et aux nouvelles expériences.",
     locale: "fr_MA",
     type: "website",
+    url: "/",
     images: [
       {
         url: "/og.png",
