@@ -26,7 +26,6 @@ import { HeroBackgroundVideo } from "./HeroBackgroundVideo";
 import {
   accessItems,
   architectureStories,
-  mediaHighlights,
   experiences,
   levels,
   navigation,
@@ -200,7 +199,7 @@ export function AmabayExperience() {
           };
 
           if (reduceMotion) {
-            gsap.set(".reveal, .word-line, .hero-kicker, .hero-title-line, .hero-detail", {
+            gsap.set(".reveal, .hero-kicker, .hero-title-line, .hero-detail", {
               autoAlpha: 1,
               y: 0,
               x: 0,
@@ -256,19 +255,6 @@ export function AmabayExperience() {
                 trigger: element,
                 start: "clamp(top 86%)",
                 once: true,
-              },
-            });
-          });
-
-          gsap.utils.toArray<HTMLElement>(".word-line").forEach((word, index) => {
-            gsap.from(word, {
-              xPercent: index % 2 === 0 ? -18 : 18,
-              autoAlpha: 0.12,
-              scrollTrigger: {
-                trigger: word,
-                start: "top 95%",
-                end: "bottom 35%",
-                scrub: 1,
               },
             });
           });
@@ -552,29 +538,6 @@ export function AmabayExperience() {
           </div>
         </section>
 
-        <section className="cinematic-break" aria-label="Découverte de l’intérieur d’Amabay Place">
-          <figure className="editorial-media cinematic-media">
-            <Image
-              className="editorial-media-image"
-              src={interiorImage}
-              alt="Galerie intérieure lumineuse dédiée à la maison et au lifestyle"
-              fill
-              sizes="100vw"
-              placeholder="blur"
-            />
-            <span className="media-grain" aria-hidden="true" />
-            <figcaption className="media-label">AMABAY PLACE / Maison & lifestyle</figcaption>
-          </figure>
-          <div className="cinematic-copy reveal">
-            <span>Architecture / identité</span>
-            <p>
-              Visible. Accessible.
-              <br />
-              <em>Mémorable.</em>
-            </p>
-          </div>
-        </section>
-
         <section id="spaces" className="levels-section light-section" aria-labelledby="levels-heading">
           <div className="section-wrap">
             <SectionLabel number="05">Showrooms & espaces</SectionLabel>
@@ -739,63 +702,11 @@ export function AmabayExperience() {
               <p className="dining-note reveal">Dedans comme dehors, chaque espace compte.</p>
             </div>
           </div>
-          <div className="dining-film">
-            <EditorialMedia
-              src={plazaCafeImage}
-              alt="Vue panoramique des terrasses et de la place extérieure"
-              label="Expérience extérieure / Terrasses & rencontres"
-              className="dining-film-media"
-              sizes="100vw"
-              objectPosition="center 56%"
-            />
-            <p className="reveal">Venir pour découvrir. Rester pour l’expérience.</p>
-          </div>
-        </section>
-
-        <section className="events-section light-section" aria-labelledby="events-heading">
-          <div className="section-wrap">
-            <SectionLabel number="08">Pourquoi Amabay Place ?</SectionLabel>
-            <div className="events-title-row">
-              <h2 id="events-heading" className="display-heading reveal">
-                Plus qu’un bon
-                <br />
-                {" "}
-                <span className="serif-italic">emplacement.</span>
-              </h2>
-              <p className="reveal">
-                Les marques recherchent aujourd’hui visibilité, accessibilité, expérience, complémentarité et destination.
-                Amabay Place réunit ces éléments dans un même projet.
-              </p>
-            </div>
-            <div className="events-list">
-              {mediaHighlights.map((event, index) => (
-                <article className="event-row reveal" key={event.title}>
-                  <div className="event-copy">
-                    <time>{event.date}</time>
-                    <h3>{event.title}</h3>
-                    <p>{event.text}</p>
-                    <span className="event-index">0{index + 1}</span>
-                  </div>
-                  <EditorialMedia
-                    src={index === 0 ? cornerFacadeImage : pianoImage}
-                    alt={
-                      index === 0
-                        ? "Façade d’Amabay Place visible depuis son vaste parvis"
-                        : "Piano blanc dans l’espace intérieur dédié aux expériences"
-                    }
-                    label={index === 0 ? "Visibilité & accessibilité" : "Home. Life. Style."}
-                    aspectRatio="16 / 9"
-                    className="event-media"
-                  />
-                </article>
-              ))}
-            </div>
-          </div>
         </section>
 
         <section id="location" className="location-section dark-section" aria-labelledby="location-heading">
           <div className="section-wrap">
-            <SectionLabel number="09">Localisation stratégique</SectionLabel>
+            <SectionLabel number="08">Localisation stratégique</SectionLabel>
             <div className="location-title-row">
               <h2 id="location-heading" className="display-heading reveal">
                 Votre prochaine adresse
@@ -831,7 +742,7 @@ export function AmabayExperience() {
 
         <section id="visit" className="visit-section light-section" aria-labelledby="visit-heading">
           <div className="section-wrap">
-            <SectionLabel number="10">Accès & parking</SectionLabel>
+            <SectionLabel number="09">Accès & parking</SectionLabel>
             <div className="visit-heading-row">
               <h2 id="visit-heading" className="display-heading reveal">
                 Facile à rejoindre.
@@ -869,7 +780,7 @@ export function AmabayExperience() {
 
         <section className="gallery-section warm-section" aria-labelledby="gallery-heading">
           <div className="section-wrap gallery-header">
-            <SectionLabel number="11">Une nouvelle façon de vivre le shopping</SectionLabel>
+            <SectionLabel number="10">Une nouvelle façon de vivre le shopping</SectionLabel>
             <h2 id="gallery-heading" className="display-heading reveal">
               Une seule adresse.
               <br />
@@ -898,18 +809,6 @@ export function AmabayExperience() {
                 </figure>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section className="brand-statement light-section">
-          <div className="section-wrap">
-            <span className="statement-eyebrow reveal">AMABAY PLACE / HOME. LIFE. STYLE.</span>
-            <p className="word-line">
-              Un lieu où les marques rencontrent leurs clients.
-              <br />
-                {" "}
-              <em>Un lieu où les idées prennent forme.</em>
-            </p>
           </div>
         </section>
 

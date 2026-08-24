@@ -106,19 +106,6 @@ export const shoppingCategories = [
   { name: "Destination", description: "Un environnement qui donne aux visiteurs plusieurs raisons de venir et de rester." },
 ] as const;
 
-export const mediaHighlights = [
-  {
-    date: "VISIBILITÉ · ACCESSIBILITÉ · ESPACES",
-    title: "Une destination visible et accessible",
-    text: "Une localisation stratégique, une architecture distinctive, des surfaces généreuses et une forte visibilité réunies dans un même projet.",
-  },
-  {
-    date: "HOME · LIFE · STYLE",
-    title: "Une expérience qui crée du trafic",
-    text: "Un positionnement maison et lifestyle, une zone d’influence régionale et plusieurs expériences pour multiplier les raisons de venir.",
-  },
-] as const;
-
 export const travelTimes = [
   { time: "15", label: "Centre-ville · 13,5 km" },
   { time: "15", label: "Sidi Maârouf · 11 km" },
