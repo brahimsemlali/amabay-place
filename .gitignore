@@ -3,12 +3,17 @@
 
 # Next.js build output
 /.next
+/.vinext
+/dist
 /out
 
 # Local and generated files
 *.tsbuildinfo
 .DS_Store
 /tmp
+/.wrangler
+/outputs
+/work
 
 # Environment files
 .env*
@@ -23,4 +28,3 @@ pnpm-debug.log*
 
 # Deployment tooling
 .vercel
-
