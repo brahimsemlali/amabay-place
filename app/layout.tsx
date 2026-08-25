@@ -18,11 +18,22 @@ const playfairDisplay = Playfair_Display({
   variable: "--font-playfair-display",
 });
 
+/**
+ * URL absolue du site. Vercel expose le domaine de production dans
+ * l'environnement : sans cela, les images Open Graph et le lien canonique
+ * pointeraient vers l'hôte de préproduction quel que soit le déploiement.
+ */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : SITE_URL);
+
 const title = `AMABAY PLACE — ${heroContent.title}`;
 const description = heroContent.location;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(siteUrl),
   title,
   description,
   alternates: { canonical: "/" },
@@ -60,8 +71,8 @@ const structuredData = {
   "@type": "ShoppingCenter",
   name: "AMABAY PLACE",
   description,
-  url: SITE_URL,
-  image: `${SITE_URL}/og.jpg`,
+  url: siteUrl,
+  image: `${siteUrl}/og.jpg`,
   address: {
     "@type": "PostalAddress",
     streetAddress: finalCta.address,
