@@ -10,18 +10,18 @@ import floorPlansImage from "@/assets/images/amabay-place-floor-plans.webp";
 import interiorImage from "@/assets/images/amabay-place-interior.webp";
 import nightImage from "@/assets/images/amabay-place-night.webp";
 import showroomsImage from "@/assets/images/amabay-place-showrooms.webp";
-import atriumImage from "@/assets/images/amabay-atrium.jpg";
-import facadeFrontImage from "@/assets/images/amabay-facade-front.jpg";
-import facadeLandscapeImage from "@/assets/images/amabay-facade-landscape.jpg";
-import fountainBridgeImage from "@/assets/images/amabay-fountain-bridge.jpg";
+import atriumImage from "@/assets/images/amabay-atrium.webp";
+import facadeFrontImage from "@/assets/images/amabay-facade-front.webp";
+import facadeLandscapeImage from "@/assets/images/amabay-facade-landscape.webp";
+import fountainBridgeImage from "@/assets/images/amabay-fountain-bridge.webp";
 import plazaCafeImage from "@/assets/images/amabay-plaza-cafe.webp";
 import plazaFountainsImage from "@/assets/images/amabay-plaza-fountains.webp";
 import sitePlanImage from "@/assets/images/amabay-site-plan.webp";
-import atriumLowAngleImage from "@/assets/images/amabay-atrium-low-angle.jpg";
-import cornerFacadeImage from "@/assets/images/amabay-corner-facade.jpg";
-import escalatorImage from "@/assets/images/amabay-escalator.jpg";
-import openFloorImage from "@/assets/images/amabay-open-floor.jpg";
-import pianoImage from "@/assets/images/amabay-piano.jpg";
+import atriumLowAngleImage from "@/assets/images/amabay-atrium-low-angle.webp";
+import cornerFacadeImage from "@/assets/images/amabay-corner-facade.webp";
+import escalatorImage from "@/assets/images/amabay-escalator.webp";
+import openFloorImage from "@/assets/images/amabay-open-floor.webp";
+import pianoImage from "@/assets/images/amabay-piano.webp";
 import { HeroBackgroundVideo } from "./HeroBackgroundVideo";
 import {
   accessItems,

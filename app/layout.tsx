@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/og.png",
+        url: "/og.jpg",
         width: 1672,
         height: 941,
         alt: "AMABAY PLACE — Là où la vie prend forme.",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: "AMABAY PLACE — Là où la vie prend forme",
     description:
       "Une nouvelle destination à Casablanca dédiée à la maison, au design, au lifestyle, à la restauration et aux nouvelles expériences.",
-    images: ["/og.png"],
+    images: ["/og.jpg"],
   },
 };
 
