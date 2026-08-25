@@ -381,12 +381,7 @@ export function AmabayExperience() {
           <div className="section-wrap">
             <SectionLabel number="01">Bienvenue à Amabay Place</SectionLabel>
             <div className="intro-heading-grid">
-              <h2 className="display-heading reveal">
-                Plus qu’un centre commercial.
-                <br />
-                {" "}
-                <span className="serif-italic">Un lieu à vivre.</span>
-              </h2>
+              <h2 className="display-heading reveal">Plus qu’un centre commercial.</h2>
               <p className="intro-copy reveal">
                 Amabay Place réunit dans une même destination des enseignes dédiées à la maison, au design, au lifestyle,
                 aux services, à la restauration et aux loisirs. Son architecture contemporaine et ses espaces ouverts créent
