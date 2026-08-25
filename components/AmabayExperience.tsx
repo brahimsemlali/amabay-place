@@ -4,157 +4,173 @@ import Image, { type StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
-import facadeImage from "@/assets/images/amabay-place-facade.webp";
+import atriumLowAngleImage from "@/assets/images/amabay-atrium-low-angle.webp";
 import floorPlansImage from "@/assets/images/amabay-place-floor-plans.webp";
-import interiorImage from "@/assets/images/amabay-place-interior.webp";
 import nightImage from "@/assets/images/amabay-place-night.webp";
-import showroomsImage from "@/assets/images/amabay-place-showrooms.webp";
-import atriumImage from "@/assets/images/amabay-atrium.webp";
-import facadeFrontImage from "@/assets/images/amabay-facade-front.webp";
-import facadeLandscapeImage from "@/assets/images/amabay-facade-landscape.webp";
-import fountainBridgeImage from "@/assets/images/amabay-fountain-bridge.webp";
+import interiorImage from "@/assets/images/amabay-place-interior.webp";
 import plazaCafeImage from "@/assets/images/amabay-plaza-cafe.webp";
 import plazaFountainsImage from "@/assets/images/amabay-plaza-fountains.webp";
 import sitePlanImage from "@/assets/images/amabay-site-plan.webp";
-import atriumLowAngleImage from "@/assets/images/amabay-atrium-low-angle.webp";
-import cornerFacadeImage from "@/assets/images/amabay-corner-facade.webp";
-import escalatorImage from "@/assets/images/amabay-escalator.webp";
-import openFloorImage from "@/assets/images/amabay-open-floor.webp";
-import pianoImage from "@/assets/images/amabay-piano.webp";
-import { HeroBackgroundVideo } from "./HeroBackgroundVideo";
+import tenantAtriumImage from "@/assets/images/amabay-tenant-atrium.webp";
+import tenantCornerFacadeImage from "@/assets/images/amabay-tenant-corner-facade.webp";
+import tenantFacadeFrontImage from "@/assets/images/amabay-tenant-facade-front.webp";
+import tenantFacadeLandscapeImage from "@/assets/images/amabay-tenant-facade-landscape.webp";
+import tenantFountainBridgeImage from "@/assets/images/amabay-tenant-fountain-bridge.webp";
+import tenantOpenFloorImage from "@/assets/images/amabay-tenant-open-floor.webp";
 import {
-  accessItems,
-  architectureStories,
-  experiences,
-  levels,
-  navigation,
-  shoppingCategories,
-  statistics,
-  travelTimes,
-} from "@/data/site";
+  contactDetails,
+  contentSections,
+  finalCta,
+  finalStatement,
+  heroContent,
+  type ContentSection,
+} from "@/data/amabayContent";
+import { ContactForm } from "./ContactForm";
+import { HeroBackgroundVideo } from "./HeroBackgroundVideo";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
-const galleryMedia = [
-  {
-    src: plazaCafeImage,
-    label: "Place extérieure / Cafés & rencontres",
-    alt: "Perspective de la place extérieure aménagée avec cafés, bassins et espaces paysagers",
-    kind: "wide",
-  },
-  {
-    src: sitePlanImage,
-    label: "Plan masse / Accès & stationnement",
-    alt: "Vue aérienne du plan masse, des accès routiers et des stationnements d’Amabay Place",
-    kind: "plan",
-  },
-  {
-    src: plazaFountainsImage,
-    label: "Promenade / Paysage & fontaines",
-    alt: "Perspective de la promenade extérieure, des fontaines et des terrasses d’Amabay Place",
-    kind: "wide",
-  },
-  {
-    src: atriumImage,
-    label: "Atrium / Lumière & circulation",
-    alt: "Atrium central lumineux avec ascenseur panoramique et galeries superposées",
-    kind: "wide",
-  },
-  {
-    src: facadeFrontImage,
-    label: "Façade / Entrée principale",
-    alt: "Façade principale d’Amabay Place photographiée sous un ciel bleu",
-    kind: "landscape",
-  },
-  {
-    src: fountainBridgeImage,
-    label: "Parvis / Passerelle & fontaines",
-    alt: "Fontaines du parvis et passerelle vitrée devant la façade d’Amabay Place",
-    kind: "landscape",
-  },
-  {
-    src: facadeLandscapeImage,
-    label: "Architecture / Paysage minéral",
-    alt: "Façade latérale, passerelle et plantations du parvis d’Amabay Place",
-    kind: "landscape",
-  },
-] as const;
-
-const experienceMedia = [
-  { src: interiorImage, alt: "Galerie intérieure dédiée à la maison et au design" },
-  { src: pianoImage, alt: "Piano blanc au cœur des espaces lifestyle d’Amabay Place" },
-  { src: plazaCafeImage, alt: "Terrasses et espaces de restauration sur la place extérieure" },
-  { src: atriumLowAngleImage, alt: "Atrium central et galeries lumineuses d’Amabay Place" },
-] as const;
-
-const architectureMedia = [
-  { src: cornerFacadeImage, alt: "Façade contemporaine d’Amabay Place et écran architectural" },
-  { src: atriumLowAngleImage, alt: "Volumes superposés et lumière de l’atrium central" },
-  { src: openFloorImage, alt: "Plateau intérieur ouvert rythmé par des colonnes lumineuses" },
-  { src: escalatorImage, alt: "Escalator et escalier reliant les niveaux d’Amabay Place" },
-] as const;
-
-const tenantMedia = [
-  { src: cornerFacadeImage, alt: "Façade offrant une forte visibilité aux enseignes" },
-  { src: openFloorImage, alt: "Plateau commercial flexible et lumineux" },
-  { src: showroomsImage, alt: "Configurations complémentaires de showrooms" },
-  { src: facadeImage, alt: "Amabay Place comme destination commerciale à Casablanca" },
-] as const;
-
-function EditorialMedia({
-  src,
-  alt,
-  label,
-  className = "",
-  aspectRatio,
-  sizes = "(min-width: 900px) 50vw, 100vw",
-  fit = "cover",
-  objectPosition = "center",
-  index,
-}: {
+type Media = {
   src: StaticImageData;
   alt: string;
-  label: string;
-  className?: string;
-  aspectRatio?: string;
-  sizes?: string;
-  fit?: "cover" | "contain";
   objectPosition?: string;
-  index?: string;
-}) {
+  fit?: "cover" | "contain";
+};
+
+/**
+ * Chaque visuel n'est utilisé qu'une seule fois : deux blocs ne doivent jamais
+ * présenter la même photo au visiteur. Tous les cadres partagent les mêmes
+ * angles arrondis, seul le format varie.
+ */
+const sectionMedia: Record<string, Media> = {
+  accessibility: {
+    src: plazaCafeImage,
+    alt: "Accès, stationnements et parvis paysager autour d’AMABAY PLACE",
+  },
+  catchment: {
+    src: tenantCornerFacadeImage,
+    alt: "AMABAY PLACE au cœur d’un bassin de vie majeur du Grand Casablanca",
+    objectPosition: "center 62%",
+  },
+  visibility: {
+    src: tenantFacadeFrontImage,
+    alt: "Façade principale et grand écran architectural visibles depuis le parvis",
+    objectPosition: "center 58%",
+  },
+  universes: {
+    src: interiorImage,
+    alt: "Plateau intérieur réunissant mobilier, décoration et univers lifestyle",
+    objectPosition: "center 60%",
+  },
+  architecture: {
+    // La façade occupe le haut du cadre : un cadrage bas ne montrerait que le parvis.
+    src: tenantFacadeLandscapeImage,
+    alt: "Façade contemporaine d’AMABAY PLACE et passerelle d’accès",
+    objectPosition: "center 32%",
+  },
+  levels: {
+    src: floorPlansImage,
+    alt: "Vue éclatée de l’organisation des niveaux d’AMABAY PLACE, du parking au R+3",
+    fit: "contain",
+  },
+  atrium: {
+    src: tenantAtriumImage,
+    alt: "Atrium central avec galeries superposées et ascenseur panoramique",
+    objectPosition: "center 42%",
+  },
+  "showroom-experience": {
+    src: tenantOpenFloorImage,
+    alt: "Plateau ouvert, lumineux et modulable destiné aux showrooms",
+  },
+  parking: {
+    src: sitePlanImage,
+    alt: "Vue aérienne des accès véhicules et de l’organisation du stationnement",
+  },
+  "connected-place": {
+    src: tenantFountainBridgeImage,
+    alt: "Parvis, fontaines et passerelle devant le bâtiment AMABAY PLACE",
+  },
+  "outdoor-experience": {
+    src: plazaFountainsImage,
+    alt: "Parvis paysager, fontaines, terrasses ombragées et stationnements",
+  },
+  brands: {
+    src: atriumLowAngleImage,
+    alt: "Contre-plongée sur l’atrium et ses galeries superposées",
+    objectPosition: "center 38%",
+  },
+  night: {
+    src: nightImage,
+    // Cadrage décalé vers la droite : la tour, l’écran et l’axe routier plutôt
+    // que les enseignes de showroom, illisibles à cette échelle.
+    alt: "AMABAY PLACE illuminé à la tombée de la nuit, en bordure de l’Avenue Mohammed VI",
+    objectPosition: "72% 60%",
+  },
+};
+
+const navigation = [
+  { label: "LOCALISATION", href: "#location" },
+  { label: "UNIVERS", href: "#universes" },
+  { label: "ARCHITECTURE", href: "#architecture" },
+  { label: "CHIFFRES", href: "#key-figures" },
+  { label: "ESPACES", href: "#showroom-experience" },
+  { label: "ENSEIGNES", href: "#brands" },
+  { label: "CONTACT", href: "#contact" },
+] as const;
+
+const byId = Object.fromEntries(
+  contentSections.map((section) => [section.id, section]),
+) as Record<string, ContentSection>;
+
+const overviewIds = ["accessibility", "catchment", "visibility"] as const;
+const spaceIds = ["parking", "connected-place", "outdoor-experience"] as const;
+
+function SectionVisual({ id, className = "" }: { id: string; className?: string }) {
+  const media = sectionMedia[id];
+  if (!media) return null;
+
   return (
-    <figure className={`editorial-media ${className}`} style={{ aspectRatio }}>
+    <figure
+      className={[
+        "property-visual",
+        media.fit === "contain" ? "is-plated" : "",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <Image
-        className="editorial-media-image"
-        src={src}
-        alt={alt}
+        src={media.src}
+        alt={media.alt}
         fill
-        sizes={sizes}
+        sizes="(min-width: 1100px) 50vw, (min-width: 720px) 46vw, 100vw"
         placeholder="blur"
-        style={{ objectFit: fit, objectPosition }}
+        style={{
+          objectFit: media.fit ?? "cover",
+          objectPosition: media.objectPosition ?? "center",
+        }}
       />
       <span className="media-grain" aria-hidden="true" />
-      <figcaption className="media-label">{label}</figcaption>
-      {index && <span className="media-index">{index}</span>}
     </figure>
   );
 }
 
-function Arrow({ diagonal = false }: { diagonal?: boolean }) {
+function Arrow() {
   return (
     <svg className="arrow" viewBox="0 0 32 16" aria-hidden="true">
-      <path d={diagonal ? "M5 13 20 3m-8 0h8v8" : "M2 8h27m-7-6 7 6-7 6"} />
+      <path d="M2 8h27m-7-6 7 6-7 6" />
     </svg>
   );
 }
 
-function SectionLabel({ number, children }: { number: string; children: React.ReactNode }) {
+/** Intitulé de rubrique : « 03 / LE BÂTIMENT », numéro en rouge signal. */
+function Eyebrow({ index, label }: { index: number; label: string }) {
   return (
-    <div className="section-label reveal">
-      <span>{number}</span>
-      <span>{children}</span>
-    </div>
+    <span className="property-eyebrow">
+      <i>{String(index).padStart(2, "0")}</i> / {label}
+    </span>
   );
 }
 
@@ -162,10 +178,6 @@ export function AmabayExperience() {
   const root = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeExperience, setActiveExperience] = useState(0);
-  const [activeArchitecture, setActiveArchitecture] = useState(0);
-  const [activeLevel, setActiveLevel] = useState(0);
-  const [activeShopping, setActiveShopping] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -183,140 +195,227 @@ export function AmabayExperience() {
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia();
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) {
+        gsap.set(
+          "[data-reveal], .hero-kicker, .hero-title-line, .hero-detail, .property-visual",
+          { autoAlpha: 1, y: 0, clearProps: "clipPath" },
+        );
+        return;
+      }
 
-      mm.add(
-        {
-          desktop: "(min-width: 900px)",
-          mobile: "(max-width: 899px)",
-          reduceMotion: "(prefers-reduced-motion: reduce)",
-        },
-        (context) => {
-          const { desktop, reduceMotion } = context.conditions as {
-            desktop: boolean;
-            mobile: boolean;
-            reduceMotion: boolean;
-          };
+      const enter = (trigger: Element) => ({
+        trigger,
+        start: "clamp(top 88%)",
+        once: true,
+      });
 
-          if (reduceMotion) {
-            gsap.set(".reveal, .hero-kicker, .hero-title-line, .hero-detail", {
-              autoAlpha: 1,
-              y: 0,
-              x: 0,
+      /* Reprend le masque du hero : chaque ligne monte derrière son propre
+         cache. `autoSplit` refait la découpe au chargement des polices et au
+         redimensionnement, `onSplit` reconstruit l'animation avec elle. */
+      const revealLines = (
+        element: HTMLElement,
+        { duration = 1.1, stagger = 0.075, ease = "power4.out" } = {},
+      ) =>
+        SplitText.create(element, {
+          type: "lines",
+          mask: "lines",
+          autoSplit: true,
+          aria: "auto",
+          onSplit: (self) =>
+            gsap.from(self.lines, {
+              yPercent: 110,
+              duration,
+              ease,
+              stagger,
+              scrollTrigger: enter(element),
+            }),
+        });
+
+      /* ---- Rang 1 — les trois moments choréographiés ---- */
+
+      gsap
+        .timeline({ defaults: { duration: 1.05, ease: "power3.out" } })
+        .from(".hero-kicker", { autoAlpha: 0, y: 18 }, 0.2)
+        .from(".hero-title-line", { yPercent: 115 }, 0.3)
+        .from(".hero-detail", { autoAlpha: 0, y: 22, stagger: 0.1 }, 0.65)
+        .from(".hero-rule", { scaleX: 0, transformOrigin: "left" }, 0.8);
+
+      gsap.utils
+        .toArray<HTMLElement>('[data-reveal="closing"]')
+        .forEach((element) => revealLines(element, { duration: 1.35, stagger: 0.11 }));
+
+      // Les chiffres : chaque glyphe roule derrière un cache, ligne après ligne.
+      const statItems = gsap.utils.toArray<HTMLElement>(".property-stats-grid > div");
+      if (statItems.length > 0) {
+        const grid = statItems[0].parentElement as HTMLElement;
+        statItems.forEach((item, index) => {
+          const value = item.querySelector("dt");
+          const label = item.querySelector("dd");
+          const at = index * 0.09;
+
+          const timeline = gsap.timeline({ scrollTrigger: enter(grid) });
+
+          if (value) {
+            SplitText.create(value, {
+              // « words,chars » et non « chars » seul : sans les mots, chaque
+              // glyphe devient un point de césure et « ENVIRON » se coupe.
+              type: "words,chars",
+              mask: "chars",
+              autoSplit: true,
+              aria: "auto",
+              onSplit: (self) =>
+                timeline.from(
+                  self.chars,
+                  { yPercent: 105, duration: 0.85, ease: "power4.out", stagger: 0.028 },
+                  at,
+                ),
             });
-            return;
           }
-
-          gsap
-            .timeline({ defaults: { duration: 1.15, ease: "power3.out" } })
-            .from(".hero-kicker", { autoAlpha: 0, y: 20 }, 0.25)
-            .from(".hero-title-line", { yPercent: 115, stagger: 0.11 }, 0.35)
-            .from(".hero-detail", { autoAlpha: 0, y: 20, stagger: 0.12 }, 0.75)
-            .from(".hero-rule", { scaleX: 0, transformOrigin: "left" }, 0.85);
-
-          if (desktop) {
-            gsap
-              .timeline({
-                defaults: { ease: "none" },
-                scrollTrigger: {
-                  trigger: ".hero-scroll",
-                  start: "top top",
-                  end: "bottom bottom",
-                  scrub: 1,
-                },
-              })
-              .to(".hero-media", { scale: 0.84, borderRadius: 4, yPercent: 8 }, 0)
-              .to(".hero-copy", { y: -90, autoAlpha: 0 }, 0)
-              .to(".hero-scroll-indicator", { autoAlpha: 0 }, 0)
-              .to(".hero-stage", { backgroundColor: "#f7f6f2" }, 0.15);
+          if (label) {
+            timeline.from(label, { autoAlpha: 0, y: 10, duration: 0.6 }, at + 0.2);
           }
+        });
+      }
 
-          gsap.utils.toArray<HTMLElement>(".reveal").forEach((element) => {
-            gsap.from(element, {
-              y: 42,
-              autoAlpha: 0,
-              duration: 1.15,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: element,
-                start: "clamp(top 88%)",
-                once: true,
-              },
-            });
-          });
+      /* ---- Rang 2 — titres de section et médias ---- */
 
-          gsap.utils.toArray<HTMLElement>(".media-reveal").forEach((element) => {
-            gsap.from(element, {
-              clipPath: "inset(14% 0 0 0)",
-              scale: 1.05,
-              duration: 1.4,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: element,
-                start: "clamp(top 86%)",
-                once: true,
-              },
-            });
-          });
+      gsap.utils.toArray<HTMLElement>('[data-reveal="heading"]').forEach((element) => {
+        revealLines(element);
+      });
 
-          gsap.utils.toArray<HTMLElement>(".architecture-chapter").forEach((chapter, index) => {
-            ScrollTrigger.create({
-              trigger: chapter,
-              start: "top 46%",
-              end: "bottom 46%",
-              onEnter: () => setActiveArchitecture(index),
-              onEnterBack: () => setActiveArchitecture(index),
-            });
-          });
+      gsap.utils
+        .toArray<HTMLElement>('[data-reveal="statement"]')
+        .forEach((element) => revealLines(element, { duration: 1.2, stagger: 0.09 }));
 
-          gsap.to(".final-media-inner", {
-            scale: 1.08,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".final-cta",
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-            },
-          });
-        },
+      gsap.utils.toArray<HTMLElement>(".property-visual").forEach((element) => {
+        gsap.from(element, {
+          clipPath: "inset(12% 0 0 0)",
+          scale: 1.04,
+          duration: 1.25,
+          ease: "power3.out",
+          scrollTrigger: { ...enter(element), start: "clamp(top 84%)" },
+        });
+      });
+
+      /* ---- Rang 3 — le reste, presque rien ---- */
+
+      gsap.utils.toArray<HTMLElement>('[data-reveal="lead"]').forEach((element) => {
+        gsap.from(element, {
+          autoAlpha: 0,
+          y: 14,
+          duration: 0.7,
+          ease: "power2.out",
+          scrollTrigger: enter(element),
+        });
+      });
+
+      gsap.utils.toArray<HTMLElement>('[data-reveal="card"]').forEach((element) => {
+        gsap.from(element, {
+          autoAlpha: 0,
+          y: 18,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: enter(element),
+        });
+      });
+
+      /* ---- Défilement lié : deux dérives et un calage, pas davantage ---- */
+
+      const parallaxTargets = gsap.utils.toArray<HTMLElement>(
+        [
+          ".property-building-visual img",
+          ".property-spaces-visual img",
+          ".property-feature-visual img",
+          ".property-universes-visual img",
+          ".property-brands-visual img",
+        ].join(", "),
       );
 
-      return () => mm.revert();
+      parallaxTargets.forEach((image) => {
+        const frame = image.closest("figure");
+        if (!frame) return;
+        // L'image est agrandie pour avoir de la matière à faire glisser sans
+        // jamais découvrir le bord du cadre : le débord vaut 8 % de la hauteur
+        // de chaque côté, la dérive n'en consomme que 5 %.
+        gsap.set(image, { scale: 1.16 });
+        gsap.fromTo(
+          image,
+          { yPercent: -5 },
+          {
+            yPercent: 5,
+            ease: "none",
+            scrollTrigger: { trigger: frame, start: "top bottom", end: "bottom top", scrub: true },
+          },
+        );
+      });
+
+      const closingImage = document.querySelector<HTMLElement>(".property-closing-image");
+      const closingSection = document.querySelector<HTMLElement>(".property-closing");
+      if (closingImage && closingSection) {
+        gsap.fromTo(
+          closingImage,
+          { scale: 1.08 },
+          {
+            scale: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: closingSection,
+              start: "top bottom",
+              end: "top top",
+              scrub: true,
+            },
+          },
+        );
+      }
+
+      /* Pas d'épinglage : le bandeau des chiffres mesure ~980 px alors qu'une
+         fenêtre de bureau courante en fait 900. Le figer masquerait sa base, et
+         le réserver aux très grands écrans le rendrait incohérent. L'entrée
+         chorégraphiée des chiffres suffit à marquer le moment. */
     },
     { scope: root },
   );
 
   const closeMenu = () => setMenuOpen(false);
-  const currentExperience = experiences[activeExperience];
-  const currentExperienceMedia = experienceMedia[activeExperience];
-  const currentArchitecture = architectureStories[activeArchitecture];
-  const currentArchitectureMedia = architectureMedia[activeArchitecture];
-  const currentLevel = levels[activeLevel];
-  const currentShopping = shoppingCategories[activeShopping];
-  const currentTenantMedia = tenantMedia[activeShopping];
+
+  const introduction = byId.introduction;
+  const homeLifeStyle = byId["home-life-style"];
+  const location = byId.location;
+  const universes = byId.universes;
+  const architecture = byId.architecture;
+  const verticalExperience = byId["vertical-experience"];
+  const wayfinding = byId.wayfinding;
+  const atrium = byId.atrium;
+  const keyFigures = byId["key-figures"];
+  const showroom = byId["showroom-experience"];
+  const brands = byId.brands;
+  const ecosystem = byId.ecosystem;
+  const strapex = byId.strapex;
+
+  const hasPhone = contactDetails.phone.length > 0;
+  const hasEmail = contactDetails.email.length > 0;
 
   return (
-    <main ref={root} className="site-shell">
+    <main ref={root} className="site-shell content-site">
       <a className="skip-link" href="#main-content">
-        Aller au contenu
+        Aller au contenu principal
       </a>
 
-      <header className={`site-header ${scrolled ? "is-scrolled" : ""} ${menuOpen ? "menu-active" : ""}`}>
-        <a className="wordmark" href="#top" onClick={closeMenu} aria-label="Accueil Amabay Place">
+      <header
+        className={`site-header ${scrolled ? "is-scrolled" : ""} ${menuOpen ? "menu-active" : ""}`}
+      >
+        <a className="wordmark" href="#top" onClick={closeMenu}>
           AMABAY PLACE
         </a>
         <nav className="desktop-nav" aria-label="Navigation principale">
-          {navigation.slice(0, 7).map((item) => (
+          {navigation.map((item) => (
             <a key={item.href} href={item.href}>
               {item.label}
             </a>
           ))}
         </nav>
         <div className="header-actions">
-          <button className="language-button" type="button" aria-label="Langue actuelle : français">
-            FR
-          </button>
           <button
             className="menu-button"
             type="button"
@@ -324,9 +423,9 @@ export function AmabayExperience() {
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((value) => !value)}
           >
-            <span className="sr-only">Ouvrir ou fermer la navigation</span>
-            <span />
-            <span />
+            <span className="sr-only">{menuOpen ? "Fermer le menu" : "Ouvrir le menu"}</span>
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
           </button>
         </div>
       </header>
@@ -340,532 +439,449 @@ export function AmabayExperience() {
             </a>
           ))}
         </nav>
-        <p>Home. Life. Style.</p>
+        <p>{heroContent.title}</p>
       </div>
 
       <div id="main-content">
-        <section id="top" className="hero-scroll" aria-labelledby="hero-title">
-          <div className="hero-stage">
-            <HeroBackgroundVideo className="hero-media" />
-            <div className="hero-shade" aria-hidden="true" />
-            <div className="hero-copy">
-              <p className="hero-kicker">Home. Life. Style.</p>
-              <h1 id="hero-title" className="hero-title">
-                <span className="title-mask">
-                  <span className="hero-title-line">AMABAY</span>
-                </span>
-                <span className="title-mask">
-                  <span className="hero-title-line serif-italic">PLACE</span>
-                </span>
-              </h1>
-              <p className="hero-tagline">Là où la vie prend forme.</p>
-              <div className="hero-footer hero-detail">
-                <p>
-                  Une nouvelle destination à Casablanca dédiée à la maison, au design, au lifestyle, à la restauration et
-                  aux nouvelles expériences.
-                </p>
-                <a className="text-link text-link--light" href="#destination">
-                  Découvrir le lieu <Arrow />
-                </a>
-              </div>
-              <span className="hero-rule" aria-hidden="true" />
+        <section id="top" className="content-hero" aria-labelledby="hero-title">
+          <HeroBackgroundVideo className="hero-media" />
+          <div className="hero-shade" aria-hidden="true" />
+          <div className="content-hero-copy">
+            <p className="hero-kicker">AMABAY PLACE</p>
+            <h1 id="hero-title" className="content-hero-title">
+              <span className="title-mask">
+                <span className="hero-title-line">{heroContent.title}</span>
+              </span>
+            </h1>
+            <p className="content-hero-location hero-detail">{heroContent.location}</p>
+            <div className="content-hero-actions hero-detail">
+              <a href="#location">
+                {heroContent.ctas[0]} <Arrow />
+              </a>
+              <a href="#showroom-experience">
+                {heroContent.ctas[1]} <Arrow />
+              </a>
             </div>
-            <div className="hero-scroll-indicator hero-detail" aria-hidden="true">
-              <span>Faire défiler</span>
-              <i />
-            </div>
+            <span className="hero-rule" aria-hidden="true" />
           </div>
         </section>
 
-        <section id="destination" className="intro-section light-section">
-          <div className="section-wrap">
-            <SectionLabel number="01">Bienvenue à Amabay Place</SectionLabel>
-            <div className="intro-heading-grid">
-              <h2 className="display-heading reveal">Plus qu’un centre commercial.</h2>
-              <p className="intro-copy reveal">
-                Amabay Place réunit dans une même destination des enseignes dédiées à la maison, au design, au lifestyle,
-                aux services, à la restauration et aux loisirs. Son architecture contemporaine et ses espaces ouverts créent
-                une expérience pensée pour les visiteurs comme pour les marques.
-              </p>
+        <div className="content-flow content-flow--day">
+          {/* 01 — Manifeste : l'ouverture narrative du projet. */}
+          <section id="manifesto" className="property-manifesto" aria-labelledby="manifesto-heading">
+            <div className="property-manifesto-lead">
+              <Eyebrow index={1} label="LE PROJET" />
+              <h2 id="manifesto-heading" data-reveal="heading">{introduction.title}</h2>
             </div>
-            <div className="intro-media-composition">
-              <figure className="editorial-media intro-media-main media-reveal">
-                <Image
-                  className="editorial-media-image"
-                  src={facadeImage}
-                  alt="Façade principale d’Amabay Place sous un ciel bleu"
-                  fill
-                  sizes="(min-width: 700px) 74vw, 88vw"
-                  placeholder="blur"
-                />
-                <span className="media-grain" aria-hidden="true" />
-                <figcaption className="media-label">AMABAY PLACE / Façade principale</figcaption>
-              </figure>
-              <EditorialMedia
-                src={pianoImage}
-                alt="Piano blanc installé dans l’atrium d’Amabay Place"
-                label="Détail intérieur / Piano & lumière"
-                aspectRatio="4 / 5"
-                className="intro-media-detail media-reveal"
-                sizes="(min-width: 700px) 29vw, 42vw"
-                objectPosition="52% center"
-              />
-              <p className="intro-caption reveal">
-                Un lieu pensé pour découvrir, choisir, s’inspirer et vivre de nouvelles expériences.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="stats-section light-section" aria-labelledby="stats-heading">
-          <div className="section-wrap">
-            <div className="stats-header">
-              <SectionLabel number="02">Une destination à portée régionale</SectionLabel>
-              <h2 id="stats-heading" className="sr-only">
-                Amabay Place en chiffres
-              </h2>
-              <p className="data-note reveal">Un emplacement. Une audience à grande échelle.</p>
-            </div>
-            <div className="stats-grid">
-              {statistics.map((stat, index) => (
-                <div className="stat-item reveal" key={stat.label}>
-                  <span className="stat-index">{String(index + 1).padStart(2, "0")}</span>
-                  <strong>
-                    {stat.value}
-                    <small>{stat.suffix}</small>
-                  </strong>
-                  <span>{stat.label}</span>
-                </div>
+            <div className="property-manifesto-copy" data-reveal="lead">
+              {introduction.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
-          </div>
-        </section>
+            <ul className="property-triptych" data-reveal="card">
+              {homeLifeStyle.items?.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}</strong>
+                  <p>{item.text}</p>
+                </li>
+              ))}
+            </ul>
+            <p className="property-manifesto-signature" data-reveal="statement">{heroContent.signature}</p>
+          </section>
 
-        <section id="experience" className="experience-section dark-section" aria-labelledby="experience-heading">
-          <div className="section-wrap">
-            <SectionLabel number="03">Un nouveau concept de destination</SectionLabel>
-            <h2 id="experience-heading" className="sr-only">
-              Shopping, inspiration et expérience
-            </h2>
-            <div className="experience-layout">
-              <div className="experience-list" role="list" aria-label="Les dimensions de l’expérience Amabay Place">
-                {experiences.map((item, index) => (
-                  <button
-                    type="button"
-                    role="listitem"
-                    className={activeExperience === index ? "is-active" : ""}
-                    key={item.name}
-                    onMouseEnter={() => setActiveExperience(index)}
-                    onFocus={() => setActiveExperience(index)}
-                    onClick={() => setActiveExperience(index)}
-                  >
-                    <span>{item.name}</span>
-                    <span className="experience-number">0{index + 1}</span>
-                  </button>
-                ))}
+          {/* 02 — Implantation. */}
+          <section id="location" className="property-overview" aria-labelledby="overview-heading">
+            <div className="property-section-heading">
+              <div className="property-section-title">
+                <Eyebrow index={2} label="IMPLANTATION" />
+                <h2 id="overview-heading" data-reveal="heading">{location.title}</h2>
               </div>
-              <div className="experience-visual">
-                <EditorialMedia
-                  key={currentExperience.name}
-                  src={currentExperienceMedia.src}
-                  alt={currentExperienceMedia.alt}
-                  label={`${currentExperience.name} / ${currentExperience.label}`}
-                  aspectRatio="4 / 5"
-                  className="experience-media"
-                  sizes="(min-width: 900px) 38vw, 100vw"
-                />
-                <div className="experience-description" aria-live="polite">
-                  <p>{currentExperience.description}</p>
-                  <span>
-                    {String(activeExperience + 1).padStart(2, "0")} / {String(experiences.length).padStart(2, "0")}
-                  </span>
-                </div>
+              <div className="property-section-intro">
+                {location.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {location.statement && (
+                  <p className="property-section-statement">{location.statement}</p>
+                )}
               </div>
             </div>
+
+            <div className="property-card-grid">
+              {overviewIds.map((id, index) => {
+                const section = byId[id];
+                return (
+                  <article id={id} className="property-card" data-reveal="card" key={id}>
+                    <SectionVisual id={id} />
+                    <span className="property-card-index">{String(index + 1).padStart(2, "0")}</span>
+                    <h3>{section.title}</h3>
+                    {section.paragraphs?.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                    {section.items && (
+                      <dl className="property-metrics">
+                        {section.items.map((item, itemIndex) => (
+                          <div key={`${id}-${itemIndex}`}>
+                            <dt>{item.value}</dt>
+                            <dd>{item.text}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 03 — Les univers réunis sur le site. */}
+          <section id="universes" className="property-universes" aria-labelledby="universes-heading">
+            <SectionVisual id="universes" className="property-universes-visual" />
+            <div className="property-universes-copy">
+              <div>
+                <Eyebrow index={3} label="LES UNIVERS" />
+                <h2 id="universes-heading" data-reveal="heading">{universes.title}</h2>
+                {universes.paragraphs?.map((paragraph) => (
+                  <p className="property-universes-intro" key={paragraph}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+              <ol className="property-universe-list" data-reveal="card">
+                {universes.items?.map((item, index) => (
+                  <li key={item.title}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <strong>{item.title}</strong>
+                    <p>{item.text}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+
+          {/* 04 — Le bâtiment : façade, circulations et niveaux réunis. */}
+          <section id="architecture" className="property-building" aria-labelledby="architecture-heading">
+            <div className="property-building-head">
+              <div className="property-building-title">
+                <Eyebrow index={4} label="LE BÂTIMENT" />
+                <h2 id="architecture-heading" data-reveal="heading">{architecture.title}</h2>
+              </div>
+              <div className="property-building-intro">
+                {architecture.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {architecture.statement && (
+                  <p className="property-building-statement">{architecture.statement}</p>
+                )}
+              </div>
+            </div>
+
+            <SectionVisual id="architecture" className="property-building-visual" />
+
+            <div className="property-building-columns">
+              <div className="property-building-column" data-reveal="card">
+                {/* Le titre de section porte déjà l'accroche : la colonne prend un
+                    intitulé court pour ne pas la répéter. */}
+                <h3>Façade et volumes</h3>
+                <ul className="property-attributes">
+                  {architecture.items?.map((item) => (
+                    <li key={item.text}>{item.text}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="property-building-column" data-reveal="card">
+                <h3>{verticalExperience.title.replace(/\.$/, "")}</h3>
+                {verticalExperience.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                <ul className="property-attributes">
+                  {verticalExperience.items?.map((item) => (
+                    <li key={item.text}>{item.text}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="property-levels" data-reveal="card">
+              <div className="property-levels-copy">
+                <h3>{wayfinding.title}</h3>
+                {wayfinding.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                <p className="property-levels-range">
+                  {wayfinding.items?.find((item) => item.value)?.value}
+                </p>
+                <ul className="property-levels-list">
+                  {wayfinding.items
+                    ?.filter((item) => item.text)
+                    .map((item) => (
+                      <li key={item.text}>{item.text}</li>
+                    ))}
+                </ul>
+              </div>
+              <SectionVisual id="levels" className="property-levels-visual" />
+            </div>
+          </section>
+
+          {/* 05 — L'atrium, seul grand bloc « feature » conservé. */}
+          <section id="atrium" className="property-feature" aria-labelledby="atrium-heading">
+            <SectionVisual id="atrium" className="property-feature-visual" />
+            <article className="property-feature-copy">
+              <Eyebrow index={5} label="LE CŒUR DU PROJET" />
+              <h2 id="atrium-heading" data-reveal="heading">{atrium.title}</h2>
+              <div className="property-feature-intro">
+                {atrium.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+              {atrium.statement && (
+                <p className="property-feature-statement">{atrium.statement}</p>
+              )}
+            </article>
+          </section>
+        </div>
+
+        {/* 06 — Les chiffres, en bandeau sombre pleine largeur. */}
+        <section id="key-figures" className="property-stats" aria-labelledby="stats-heading">
+          <div className="property-stats-inner">
+            <div className="property-stats-heading">
+              <Eyebrow index={6} label="DIMENSIONS" />
+              <h2 id="stats-heading" data-reveal="heading">{keyFigures.title}</h2>
+            </div>
+            <dl className="property-stats-grid">
+              {keyFigures.items?.map((item, index) => (
+                <div key={`stat-${index}`}>
+                  <dt>{item.value}</dt>
+                  <dd>{item.text}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
-        <section id="architecture" className="architecture-section light-section" aria-labelledby="architecture-heading">
-          <div className="section-wrap architecture-intro">
-            <SectionLabel number="04">Architecture</SectionLabel>
-            <h2 id="architecture-heading" className="display-heading reveal">
-              Une architecture
-              <br />
-              {" "}
-              <span className="serif-italic">qui se remarque.</span>
+        <div className="content-flow content-flow--dusk">
+          {/* 07 — Espaces et services. */}
+          <section id="showroom-experience" className="property-spaces" aria-labelledby="spaces-heading">
+            <div className="property-section-heading">
+              <div className="property-section-title">
+                <Eyebrow index={7} label="ESPACES & SERVICES" />
+                <h2 id="spaces-heading" data-reveal="heading">{showroom.title}</h2>
+              </div>
+              <div className="property-section-intro">
+                {showroom.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {showroom.statement && (
+                  <p className="property-section-statement">{showroom.statement}</p>
+                )}
+              </div>
+            </div>
+
+            <figure className="property-visual property-spaces-visual">
+              <Image
+                src={sectionMedia["showroom-experience"].src}
+                alt={sectionMedia["showroom-experience"].alt}
+                fill
+                sizes="(min-width: 1100px) 1380px, 100vw"
+                placeholder="blur"
+                style={{ objectFit: "cover", objectPosition: "center 55%" }}
+              />
+              <span className="media-grain" aria-hidden="true" />
+            </figure>
+
+            <div className="property-card-grid property-card-grid--spaces">
+              {spaceIds.map((id, index) => {
+                const section = byId[id];
+                return (
+                  <article id={id} className="property-card" data-reveal="card" key={id}>
+                    <SectionVisual id={id} />
+                    <span className="property-card-index">{String(index + 1).padStart(2, "0")}</span>
+                    <h3>{section.title}</h3>
+                    {section.paragraphs?.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                    {section.items && (
+                      <ul className="property-attributes">
+                        {section.items.map((item) => (
+                          <li key={item.text}>{item.text}</li>
+                        ))}
+                      </ul>
+                    )}
+                    {section.statement && (
+                      <p className="property-card-statement">{section.statement}</p>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 08 — L'argumentaire enseignes : la cible commerciale du site. */}
+          <section id="brands" className="property-brands" aria-labelledby="brands-heading">
+            <div className="property-brands-copy">
+              <div>
+                <Eyebrow index={8} label="POUR LES ENSEIGNES" />
+                <h2 id="brands-heading" data-reveal="heading">{brands.title}</h2>
+                {brands.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {brands.statement && <p className="property-brands-statement">{brands.statement}</p>}
+              </div>
+              <div className="property-ecosystem" data-reveal="card">
+                <h3>{ecosystem.title}</h3>
+                {ecosystem.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {ecosystem.statement && (
+                  <p className="property-ecosystem-statement">{ecosystem.statement}</p>
+                )}
+              </div>
+            </div>
+            <SectionVisual id="brands" className="property-brands-visual" />
+          </section>
+
+          {/* 09 — L'histoire du groupe : la preuve de solidité. */}
+          <section id="strapex" className="property-heritage" aria-labelledby="heritage-heading">
+            <div className="property-heritage-head">
+              <Eyebrow index={9} label="LE GROUPE" />
+              <h2 id="heritage-heading" data-reveal="heading">{strapex.title}</h2>
+              {strapex.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+            <ol className="property-timeline" data-reveal="card">
+              {strapex.items?.map((item) => (
+                <li key={item.value}>
+                  <strong>{item.value}</strong>
+                  <span>{item.text}</span>
+                </li>
+              ))}
+            </ol>
+            {strapex.statement && (
+              <p className="property-heritage-statement" data-reveal="statement">{strapex.statement}</p>
+            )}
+          </section>
+        </div>
+
+        {/* 10 — Déclaration de clôture, en pleine image. */}
+        <section className="property-closing" aria-labelledby="closing-heading">
+          <Image
+            className="property-closing-image"
+            src={sectionMedia.night.src}
+            alt={sectionMedia.night.alt}
+            fill
+            sizes="100vw"
+            placeholder="blur"
+            style={{ objectFit: "cover", objectPosition: sectionMedia.night.objectPosition }}
+          />
+          <div className="property-closing-shade" aria-hidden="true" />
+          <div className="property-closing-copy">
+            <h2 id="closing-heading" data-reveal="closing">
+              {finalStatement.title}
             </h2>
-            <p className="architecture-lead reveal">
-              Des lignes contemporaines, de grandes façades et des volumes ouverts donnent à Amabay Place une identité
-              immédiatement reconnaissable.
+            {finalStatement.paragraphs.map((paragraph) => (
+              <p data-reveal="lead" key={paragraph}>
+                {paragraph}
+              </p>
+            ))}
+            <p className="property-closing-signature" data-reveal="lead">
+              <strong>{finalStatement.signature}</strong>
+              <span>{finalStatement.closing}</span>
             </p>
           </div>
-          <div className="architecture-story">
-            <div className="architecture-sticky">
-              <div className="architecture-media-wrap">
-                <EditorialMedia
-                  key={currentArchitecture.title}
-                  src={currentArchitectureMedia.src}
-                  alt={currentArchitectureMedia.alt}
-                  label={currentArchitecture.media}
-                  aspectRatio="4 / 5"
-                  index={currentArchitecture.index}
-                  className="architecture-media"
-                  sizes="(min-width: 900px) 48vw, 100vw"
-                />
-              </div>
-              <div className="architecture-progress" aria-hidden="true">
-                <span style={{ transform: `scaleX(${(activeArchitecture + 1) / architectureStories.length})` }} />
-              </div>
-            </div>
-            <div className="architecture-chapters">
-              {architectureStories.map((story, index) => (
-                <article
-                  className={`architecture-chapter ${activeArchitecture === index ? "is-active" : ""}`}
-                  key={story.title}
-                  onMouseEnter={() => setActiveArchitecture(index)}
-                >
-                  <span>{story.index}</span>
-                  <h3>{story.title}</h3>
-                  <p>{story.text}</p>
-                </article>
-              ))}
-            </div>
-          </div>
         </section>
 
-        <section id="spaces" className="levels-section light-section" aria-labelledby="levels-heading">
-          <div className="section-wrap">
-            <SectionLabel number="05">Showrooms & espaces</SectionLabel>
-            <div className="levels-heading-row">
-              <h2 id="levels-heading" className="display-heading reveal">
-                Des espaces conçus
-                <br />
-                {" "}
-                <span className="serif-italic">pour inspirer.</span>
+        {/* 11 — Contact : le point de conversion. */}
+        <section id="contact" className="content-contact" aria-labelledby="contact-heading">
+          <div className="content-contact-inner">
+            <div className="content-contact-lead">
+              <Eyebrow index={10} label="CONTACT" />
+              <h2 id="contact-heading" data-reveal="heading">
+                {finalCta.title}
               </h2>
-              <p className="reveal">
-                Mobilier, cuisines, salles de bain, décoration, matériaux, technologie ou équipement : les marques disposent
-                d’espaces permettant de présenter leurs produits dans de véritables mises en situation.
-              </p>
+              <p className="content-contact-intro" data-reveal="lead">{finalCta.introduction}</p>
+              <p data-reveal="lead">{finalCta.text}</p>
             </div>
-            <div className="levels-layout">
-              <div className="level-tabs" role="tablist" aria-label="Niveaux du centre">
-                {levels.map((level, index) => (
-                  <button
-                    key={level.code}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeLevel === index}
-                    aria-controls="level-panel"
-                    className={activeLevel === index ? "is-active" : ""}
-                    onClick={() => setActiveLevel(index)}
+
+            <div className="content-contact-form" data-reveal="card">
+              <ContactForm />
+            </div>
+
+            <div className="content-contact-panel" data-reveal="card">
+              <ul className="contact-channels">
+                {hasPhone && (
+                  <li>
+                    <span>Téléphone</span>
+                    <a href={`tel:${contactDetails.phone.replace(/\s+/g, "")}`}>
+                      {contactDetails.phoneLabel || contactDetails.phone}
+                    </a>
+                  </li>
+                )}
+                {hasEmail && (
+                  <li>
+                    <span>E-mail</span>
+                    <a href={`mailto:${contactDetails.email}`}>{contactDetails.email}</a>
+                  </li>
+                )}
+                <li>
+                  <span>Adresse</span>
+                  <a
+                    href={contactDetails.mapsUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
                   >
-                    <span>{level.code}</span>
-                    <small>{level.name}</small>
-                  </button>
-                ))}
-              </div>
-              <div id="level-panel" className="level-panel" role="tabpanel" tabIndex={0}>
-                <figure className="editorial-media technical-plan-media floor-plan">
-                  <Image
-                    className="editorial-media-image"
-                    src={floorPlansImage}
-                    alt="Vue éclatée des quatre niveaux et plans d’étage d’Amabay Place"
-                    fill
-                    sizes="(min-width: 700px) 62vw, 100vw"
-                    placeholder="blur"
-                  />
-                  <span className="media-grain" aria-hidden="true" />
-                  <figcaption className="media-label">AMABAY PLACE / Organisation des niveaux</figcaption>
-                </figure>
-                <div className="level-detail">
-                  <div>
-                    <span>{currentLevel.code}</span>
-                    <h3>{currentLevel.name}</h3>
-                  </div>
-                  <p>{currentLevel.description}</p>
-                  <ul>
-                    {currentLevel.uses.map((use) => (
-                      <li key={use}>{use}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+                    {finalCta.address}
+                    <br />
+                    {finalCta.city}
+                    <em>{contactDetails.mapsLabel}</em>
+                  </a>
+                </li>
+              </ul>
 
-        <section id="shopping" className="shopping-section warm-section" aria-labelledby="shopping-heading">
-          <div className="section-wrap">
-            <SectionLabel number="06">Marques & enseignes</SectionLabel>
-            <div className="shopping-title-row">
-              <h2 id="shopping-heading" className="display-heading reveal">
-                Votre marque
-                <br />
-                {" "}
-                <span className="serif-italic">en grand format.</span>
-              </h2>
-              <p className="reveal">
-                Amabay Place offre aux enseignes un environnement pensé pour développer leur visibilité, leur image et leur
-                activité. Des surfaces généreuses permettent de créer de véritables showrooms et expériences de marque.
-              </p>
-            </div>
-            <div className="shopping-layout">
-              <EditorialMedia
-                key={currentShopping.name}
-                src={currentTenantMedia.src}
-                alt={currentTenantMedia.alt}
-                label={`${currentShopping.name} / Opportunités d’implantation`}
-                aspectRatio="4 / 5"
-                className="shopping-media"
-                sizes="(min-width: 900px) 36vw, 100vw"
-              />
-              <div className="shopping-categories" role="list">
-                {shoppingCategories.map((category, index) => (
-                  <button
-                    key={category.name}
-                    type="button"
-                    role="listitem"
-                    className={activeShopping === index ? "is-active" : ""}
-                    onMouseEnter={() => setActiveShopping(index)}
-                    onFocus={() => setActiveShopping(index)}
-                    onClick={() => setActiveShopping(index)}
+              <div className="content-contact-actions">
+                <a href="#brands">
+                  Devenir partenaire <Arrow />
+                </a>
+                <a href="#showroom-experience">
+                  Découvrir nos espaces <Arrow />
+                </a>
+                {hasEmail && (
+                  <a
+                    href={`mailto:${contactDetails.email}?subject=${encodeURIComponent(
+                      "Organiser une visite d’AMABAY PLACE",
+                    )}`}
                   >
-                    <span>{category.name}</span>
-                    <Arrow diagonal />
-                  </button>
-                ))}
-                <div className="shopping-description" aria-live="polite">
-                  <span>0{activeShopping + 1}</span>
-                  <p>{currentShopping.description}</p>
-                </div>
+                    Organiser une visite <Arrow />
+                  </a>
+                )}
               </div>
             </div>
-            <figure className="editorial-media showroom-feature media-reveal">
-              <Image
-                className="editorial-media-image"
-                src={showroomsImage}
-                alt="Proposition architecturale de trois showrooms éclairés en soirée"
-                fill
-                sizes="(min-width: 1680px) 1680px, 100vw"
-                placeholder="blur"
-              />
-              <span className="media-grain" aria-hidden="true" />
-              <figcaption className="media-label">Configurations showroom / Opportunités d’implantation</figcaption>
-            </figure>
           </div>
         </section>
 
-        <section id="dining" className="dining-section sand-section" aria-labelledby="dining-heading">
-          <div className="section-wrap">
-            <SectionLabel number="07">Espaces extérieurs</SectionLabel>
-            <div className="dining-heading-row">
-              <h2 id="dining-heading" className="display-heading reveal">
-                Des espaces qui prolongent
+        <footer className="site-footer">
+          <div className="site-footer-inner">
+            <div className="site-footer-brand">
+              <strong>{finalCta.brand}</strong>
+              <address>
+                {finalCta.address}
                 <br />
-                {" "}
-                <span className="serif-italic">l’expérience.</span>
-              </h2>
-              <p className="reveal">
-                Terrasses, espaces paysagers, restauration et zones de détente accompagnent le parcours des visiteurs et
-                donnent au projet une véritable dimension de destination.
-              </p>
+                {finalCta.city}
+              </address>
             </div>
-            <div className="dining-composition">
-              <EditorialMedia
-                src={plazaCafeImage}
-                alt="Place extérieure aménagée avec cafés et espaces de rencontre"
-                label="Terrasses & restauration"
-                aspectRatio="4 / 5"
-                className="dining-main media-reveal"
-                objectPosition="55% center"
-              />
-              <EditorialMedia
-                src={plazaFountainsImage}
-                alt="Promenade paysagère avec fontaines et terrasses"
-                label="Espaces paysagers"
-                aspectRatio="3 / 2"
-                className="dining-small dining-small--top media-reveal"
-              />
-              <EditorialMedia
-                src={fountainBridgeImage}
-                alt="Passerelle et fontaines du parvis d’Amabay Place"
-                label="Zones de détente"
-                aspectRatio="3 / 2"
-                className="dining-small dining-small--bottom media-reveal"
-              />
-              <p className="dining-note reveal">Dedans comme dehors, chaque espace compte.</p>
-            </div>
-          </div>
-        </section>
-
-        <section id="location" className="location-section dark-section" aria-labelledby="location-heading">
-          <div className="section-wrap">
-            <SectionLabel number="08">Localisation stratégique</SectionLabel>
-            <div className="location-title-row">
-              <h2 id="location-heading" className="display-heading reveal">
-                Votre prochaine adresse
-                <br />
-                {" "}
-                <span className="serif-italic">à Casablanca.</span>
-              </h2>
-              <p className="reveal">
-                Situé au Km 9, Route de Médiouna – Avenue Mohammed VI, Amabay Place bénéficie d’un emplacement stratégique à
-                l’entrée de Casablanca.
-              </p>
-            </div>
-            <EditorialMedia
-              src={sitePlanImage}
-              alt="Plan masse d’Amabay Place avec accès routiers, stationnement et espaces extérieurs"
-              label="Km 9 · Route de Médiouna · Avenue Mohammed VI"
-              aspectRatio="16 / 9"
-              className="location-map media-reveal"
-              sizes="(min-width: 1680px) 1680px, 100vw"
-              fit="contain"
-            />
-            <div className="travel-times" aria-label="Temps d’accès à Amabay Place">
-              {travelTimes.map((item) => (
-                <div className="travel-item reveal" key={`${item.time}-${item.label}`}>
-                  <strong>{item.time}</strong>
-                  <span>MIN</span>
-                  <p>{item.label}</p>
-                </div>
+            <nav className="site-footer-nav" aria-label="Navigation de pied de page">
+              {navigation.map((item) => (
+                <a key={item.href} href={item.href}>
+                  {item.label}
+                </a>
               ))}
-            </div>
+            </nav>
+            <p className="site-footer-legal">
+              <span>{finalStatement.signature}</span>
+              <span>© {new Date().getFullYear()} AMABAY PLACE — Groupe STRAPEX Maroc</span>
+            </p>
           </div>
-        </section>
-
-        <section id="visit" className="visit-section light-section" aria-labelledby="visit-heading">
-          <div className="section-wrap">
-            <SectionLabel number="09">Accès & parking</SectionLabel>
-            <div className="visit-heading-row">
-              <h2 id="visit-heading" className="display-heading reveal">
-                Facile à rejoindre.
-                <br />
-                {" "}
-                <span className="serif-italic">Facile à repérer.</span>
-              </h2>
-              <p className="reveal">
-                Amabay Place profite de connexions directes avec les principaux axes routiers de la région et d’une excellente
-                visibilité depuis son environnement immédiat.
-              </p>
-            </div>
-            <div className="access-grid">
-              <div className="access-list">
-                {accessItems.map((item, index) => (
-                  <div className="access-item reveal" key={item.title}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <p>{item.title}</p>
-                    <small>{item.detail}</small>
-                  </div>
-                ))}
-              </div>
-              <EditorialMedia
-                src={cornerFacadeImage}
-                alt="Parvis accessible et façade visible d’Amabay Place"
-                label="Parking sous-sol & extérieur"
-                aspectRatio="4 / 5"
-                className="parking-media media-reveal"
-                sizes="(min-width: 900px) 38vw, 100vw"
-                objectPosition="62% center"
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="gallery-section warm-section" aria-labelledby="gallery-heading">
-          <div className="section-wrap gallery-header">
-            <SectionLabel number="10">Une nouvelle façon de vivre le shopping</SectionLabel>
-            <h2 id="gallery-heading" className="display-heading reveal">
-              Une seule adresse.
-              <br />
-                {" "}
-              <span className="serif-italic">Plusieurs expériences.</span>
-            </h2>
-          </div>
-          <div className="gallery-viewport">
-            <div className="gallery-track">
-              {galleryMedia.map((item, index) => (
-                <figure
-                  key={item.label}
-                  className={`editorial-media gallery-item gallery-item--${item.kind} media-reveal`}
-                >
-                  <Image
-                    className="editorial-media-image"
-                    src={item.src}
-                    alt={item.alt}
-                    fill
-                    sizes="(min-width: 900px) 58vw, 100vw"
-                    placeholder="blur"
-                  />
-                  <span className="media-grain" aria-hidden="true" />
-                  <figcaption className="media-label">{item.label}</figcaption>
-                  <span className="media-index">{String(index + 1).padStart(2, "0")}</span>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="final-cta" aria-labelledby="final-heading">
-          <div className="final-media-inner">
-            <figure className="editorial-media final-media">
-              <Image
-                className="editorial-media-image final-night-image"
-                src={nightImage}
-                alt="Vue aérienne nocturne d’Amabay Place et de ses accès éclairés"
-                fill
-                sizes="100vw"
-                placeholder="blur"
-              />
-              <span className="media-grain" aria-hidden="true" />
-              <figcaption className="media-label">AMABAY PLACE / Casablanca, porte sud-est</figcaption>
-            </figure>
-          </div>
-          <div className="final-overlay" />
-          <div className="final-content">
-            <span className="reveal">Opportunités commerciales / Casablanca</span>
-            <h2 id="final-heading" className="reveal">
-              Faites partie
-              <br />
-                {" "}
-              <em>d’Amabay Place.</em>
-            </h2>
-            <a className="text-link text-link--light reveal" href="#shopping">
-              Découvrir les espaces <Arrow />
-            </a>
-          </div>
-        </section>
+        </footer>
       </div>
-
-      <footer className="site-footer">
-        <div className="footer-top">
-          <a className="footer-wordmark" href="#top">
-            AMABAY PLACE
-          </a>
-          <nav aria-label="Navigation de pied de page">
-            {navigation.map((item) => (
-              <a href={item.href} key={item.href}>
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <div className="footer-contact">
-            <span>Home. Life. Style.</span>
-            <p>Km 9 — Route de Médiouna</p>
-            <p>Avenue Mohammed VI · Casablanca, Maroc</p>
-            <p>Une nouvelle destination pour la maison, le lifestyle et les expériences.</p>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Amabay Place. Tous droits réservés.</span>
-          <div>
-            <a href="#">Confidentialité</a>
-            <a href="#">Mentions légales</a>
-          </div>
-          <a href="#top">Retour en haut ↑</a>
-        </div>
-      </footer>
     </main>
   );
 }

@@ -58,7 +58,6 @@ export function HeroBackgroundVideo({ className = "" }: { className?: string }) 
         <Poster />
       )}
       <span className="media-grain" />
-      <span className="media-label">Vidéo principale · Mux adaptive stream</span>
     </div>
   );
 }
