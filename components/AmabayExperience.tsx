@@ -177,6 +177,7 @@ function Eyebrow({ index, label }: { index: number; label: string }) {
 
 export function AmabayExperience() {
   const root = useRef<HTMLElement>(null);
+  const atmosphere = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [heroMediaReady, setHeroMediaReady] = useState(false);
@@ -187,6 +188,83 @@ export function AmabayExperience() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const field = atmosphere.current;
+    if (!field) return;
+
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let animationFrame = 0;
+
+    const smoothstep = (start: number, end: number, value: number) => {
+      const normalized = Math.min(1, Math.max(0, (value - start) / (end - start)));
+      return normalized * normalized * (3 - 2 * normalized);
+    };
+
+    const setAtmosphere = (progress: number) => {
+      const morning = 1 - smoothstep(0.14, 0.43, progress);
+      const midday =
+        smoothstep(0.1, 0.4, progress) * (1 - smoothstep(0.62, 0.88, progress));
+      const dusk = smoothstep(0.58, 0.91, progress);
+      const driftX = -3.5 + progress * 7;
+      const driftY = -2 + progress * 4.5;
+      const reverseDriftX = 3.5 - progress * 7;
+      const reverseDriftY = 1.5 - progress * 3.5;
+
+      field.style.setProperty("--atmosphere-progress", progress.toFixed(4));
+      field.style.setProperty("--atmosphere-morning", morning.toFixed(4));
+      field.style.setProperty("--atmosphere-midday", midday.toFixed(4));
+      field.style.setProperty("--atmosphere-dusk", dusk.toFixed(4));
+      field.style.setProperty("--atmosphere-drift-x", `${driftX.toFixed(3)}vw`);
+      field.style.setProperty("--atmosphere-drift-y", `${driftY.toFixed(3)}vh`);
+      field.style.setProperty(
+        "--atmosphere-drift-x-reverse",
+        `${reverseDriftX.toFixed(3)}vw`,
+      );
+      field.style.setProperty(
+        "--atmosphere-drift-y-reverse",
+        `${reverseDriftY.toFixed(3)}vh`,
+      );
+    };
+
+    const updateAtmosphere = () => {
+      animationFrame = 0;
+
+      if (motionPreference.matches) {
+        field.style.setProperty("--atmosphere-progress", "0.5000");
+        field.style.setProperty("--atmosphere-morning", "0.0000");
+        field.style.setProperty("--atmosphere-midday", "1.0000");
+        field.style.setProperty("--atmosphere-dusk", "0.0000");
+        field.style.setProperty("--atmosphere-drift-x", "0vw");
+        field.style.setProperty("--atmosphere-drift-y", "0vh");
+        field.style.setProperty("--atmosphere-drift-x-reverse", "0vw");
+        field.style.setProperty("--atmosphere-drift-y-reverse", "0vh");
+        return;
+      }
+
+      const scrollRange = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      setAtmosphere(Math.min(1, Math.max(0, window.scrollY / scrollRange)));
+    };
+
+    const requestAtmosphereUpdate = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(updateAtmosphere);
+    };
+
+    updateAtmosphere();
+    window.addEventListener("scroll", requestAtmosphereUpdate, { passive: true });
+    window.addEventListener("resize", requestAtmosphereUpdate, { passive: true });
+    motionPreference.addEventListener("change", requestAtmosphereUpdate);
+
+    return () => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", requestAtmosphereUpdate);
+      window.removeEventListener("resize", requestAtmosphereUpdate);
+      motionPreference.removeEventListener("change", requestAtmosphereUpdate);
+    };
   }, []);
 
   useEffect(() => {
@@ -405,6 +483,11 @@ export function AmabayExperience() {
         mediaReady={heroMediaReady}
         onComplete={() => setPreloaderActive(false)}
       />
+      <div ref={atmosphere} className="atmospheric-field" aria-hidden="true">
+        <span className="atmospheric-layer atmospheric-layer--morning" />
+        <span className="atmospheric-layer atmospheric-layer--midday" />
+        <span className="atmospheric-layer atmospheric-layer--dusk" />
+      </div>
       <main
         ref={root}
         className="site-shell content-site"

@@ -8,6 +8,8 @@
   --line: rgba(51, 51, 49, 0.2);
   --charcoal: #333331;
   --ink: #151515;
+  --copy: #555852;
+  --copy-muted: #5d605a;
   --taupe: #9b968e;
   /* Rouge relevé sur l'écran LED de la façade (photo de nuit) : rgb(211,16,23).
      Accent unique du site, utilisé cinq fois — numéros de rubrique, focus de
@@ -25,12 +27,12 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--paper);
+  background: #f8fbfd;
 }
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: #f8fbfd;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: clamp(1rem, 0.2vw + 0.95rem, 1.08rem);
@@ -113,6 +115,78 @@ a {
   overflow: clip;
 }
 
+/* Trois variations d'un même bleu poudre composées par opacité. Elles forment
+   un seul champ continu et ne repeignent que le viewport, jamais les ~15 000 px
+   de la page. */
+.atmospheric-field {
+  --atmosphere-progress: 0;
+  --atmosphere-morning: 1;
+  --atmosphere-midday: 0;
+  --atmosphere-dusk: 0;
+  --atmosphere-drift-x: -3.5vw;
+  --atmosphere-drift-y: -2vh;
+  --atmosphere-drift-x-reverse: 3.5vw;
+  --atmosphere-drift-y-reverse: 1.5vh;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  min-height: 100svh;
+  overflow: hidden;
+  contain: strict;
+  background: #f8fbfd;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+
+.atmospheric-layer {
+  position: absolute;
+  inset: -12%;
+  display: block;
+  will-change: opacity, transform;
+}
+
+.atmospheric-layer--morning {
+  opacity: var(--atmosphere-morning);
+  transform: translate3d(
+    var(--atmosphere-drift-x),
+    var(--atmosphere-drift-y),
+    0
+  );
+  background:
+    radial-gradient(ellipse 72% 78% at 48% 45%, rgba(184, 218, 247, 0.68), transparent 66%),
+    radial-gradient(ellipse 52% 55% at 20% 8%, rgba(220, 237, 250, 0.52), transparent 72%),
+    radial-gradient(ellipse 58% 62% at 88% 88%, rgba(230, 241, 250, 0.46), transparent 74%),
+    #fbfcfd;
+}
+
+.atmospheric-layer--midday {
+  opacity: var(--atmosphere-midday);
+  transform: translate3d(
+    var(--atmosphere-drift-x-reverse),
+    var(--atmosphere-drift-y-reverse),
+    0
+  );
+  background:
+    radial-gradient(ellipse 76% 74% at 55% 48%, rgba(177, 214, 245, 0.62), transparent 67%),
+    radial-gradient(ellipse 48% 56% at 10% 82%, rgba(214, 233, 247, 0.48), transparent 72%),
+    radial-gradient(ellipse 54% 58% at 96% 12%, rgba(226, 239, 249, 0.5), transparent 74%),
+    #f9fbfd;
+}
+
+.atmospheric-layer--dusk {
+  opacity: var(--atmosphere-dusk);
+  transform: translate3d(
+    var(--atmosphere-drift-x),
+    var(--atmosphere-drift-y-reverse),
+    0
+  );
+  background:
+    radial-gradient(ellipse 78% 76% at 62% 58%, rgba(170, 207, 237, 0.56), transparent 68%),
+    radial-gradient(ellipse 52% 58% at 4% 16%, rgba(218, 235, 248, 0.48), transparent 73%),
+    radial-gradient(ellipse 58% 62% at 98% 92%, rgba(207, 227, 242, 0.46), transparent 74%),
+    #f8fbfd;
+}
+
 /* L'ouverture reprend le vocabulaire éditorial du site : papier chaud,
    géométrie architecturale et typographie très espacée, sans spinner. */
 .site-preloader {
@@ -124,7 +198,7 @@ a {
   min-height: 100svh;
   padding: clamp(1.5rem, 4vw, 4rem) var(--page-pad);
   overflow: hidden;
-  background: #f2efe8;
+  background: #f3f8fc;
   color: var(--ink);
   clip-path: inset(0);
   transition: clip-path 0.75s var(--ease), visibility 0s 0.75s;
@@ -336,7 +410,7 @@ body::after {
   position: fixed;
   z-index: 200;
   inset: 0;
-  opacity: 0.045;
+  opacity: 0.068;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events: none;
 }
@@ -622,14 +696,17 @@ em {
 
 }
 .content-site {
-  background: var(--paper);
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background: transparent;
 }
 
 .content-hero {
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  background: var(--ink);
+  background: transparent;
   color: var(--paper);
 }
 
@@ -699,21 +776,21 @@ em {
 }
 .content-site {
   --editorial-width: 1540px;
-  --architectural-plan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='720' viewBox='0 0 720 720'%3E%3Cg fill='none' stroke='%23797065' stroke-width='1'%3E%3Cpath d='M42 74h386v92h190v344h-78v138H208v-82H74V290H42Z'/%3E%3Cpath d='M74 166h244v124h222v220H318v56M208 290v276M318 166v124M428 74v436M540 166v482'/%3E%3Cpath d='M74 410h134m110 100v138M428 410h112M208 510h110'/%3E%3Ccircle cx='428' cy='290' r='58'/%3E%3Ccircle cx='428' cy='290' r='34'/%3E%3Cpath d='M618 250h48v174h-48M540 566h64v82h-64M42 214H12v120h30'/%3E%3C/g%3E%3C/svg%3E");
-  background: #f3f3f1;
+  --architectural-plan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='720' viewBox='0 0 720 720'%3E%3Cg fill='none' stroke='%2371808a' stroke-width='1'%3E%3Cpath d='M42 74h386v92h190v344h-78v138H208v-82H74V290H42Z'/%3E%3Cpath d='M74 166h244v124h222v220H318v56M208 290v276M318 166v124M428 74v436M540 166v482'/%3E%3Cpath d='M74 410h134m110 100v138M428 410h112M208 510h110'/%3E%3Ccircle cx='428' cy='290' r='58'/%3E%3Ccircle cx='428' cy='290' r='34'/%3E%3Cpath d='M618 250h48v174h-48M540 566h64v82h-64M42 214H12v120h30'/%3E%3C/g%3E%3C/svg%3E");
+  background: transparent;
 }
 
 .content-site .site-header {
   height: 5.25rem;
   color: var(--ink);
-  background: rgba(250, 250, 248, 0.92);
+  background: rgba(250, 252, 253, 0.92);
   border-bottom: 1px solid rgba(21, 21, 21, 0.08);
   backdrop-filter: blur(16px);
 }
 
 .content-site .site-header.is-scrolled:not(.menu-active) {
   height: 4.25rem;
-  background: rgba(250, 250, 248, 0.94);
+  background: rgba(250, 252, 253, 0.94);
 }
 
 .content-site .wordmark {
@@ -726,9 +803,9 @@ em {
   width: min(calc(100% - clamp(1.25rem, 4vw, 5.5rem)), var(--editorial-width));
   min-height: min(900px, calc(100svh - clamp(1.25rem, 4vw, 3.5rem)));
   margin: clamp(1rem, 2vw, 2rem) auto clamp(5rem, 9vw, 9rem);
-  background: #fafaf8;
+  background: transparent;
   color: var(--ink);
-  box-shadow: 0 2.5rem 6rem rgba(30, 39, 43, 0.12);
+  box-shadow: none;
 }
 
 .content-hero .hero-media {
@@ -916,9 +993,8 @@ em {
    chiffres, espaces, enseignes, groupe, clôture, contact, pied de page.
    --------------------------------------------------------------------------- */
 
-/* La page descend du jour vers la nuit : deux dégradés très plats et deux
-   paliers suffisent à donner au défilement une sensation de trajet, sans que
-   la transition ne se remarque nulle part. */
+/* Les sections restent transparentes : le champ atmosphérique fixe porte seul
+   la progression chromatique et évite toute couture entre les blocs. */
 .content-site .content-flow {
   position: relative;
   isolation: isolate;
@@ -927,7 +1003,7 @@ em {
   margin: 0;
   padding: 0;
   display: block;
-  background: #fafaf8;
+  background: transparent;
 }
 
 .content-site .content-flow > * {
@@ -953,17 +1029,14 @@ em {
 
 /* Même portée que `.content-site .content-flow`, sinon la règle de base gagne. */
 .content-site .content-flow--day {
-  background:
-    radial-gradient(ellipse 42rem 54rem at 0% 16%, rgba(222, 207, 181, 0.34), transparent 72%),
-    radial-gradient(ellipse 36rem 48rem at 100% 72%, rgba(215, 203, 183, 0.28), transparent 74%),
-    linear-gradient(180deg, #fafaf8 0%, #f5f4ef 100%);
+  background: transparent;
 }
 
 .content-site .content-flow--day::before {
   background-position:
     calc(100% + 13rem) 7rem,
     -11rem 68%;
-  opacity: 0.16;
+  opacity: 0.08;
 }
 
 /* Une seule ombre solaire traverse la partie diurne, comme une façade ajourée.
@@ -980,9 +1053,9 @@ em {
   background: linear-gradient(
     112deg,
     transparent 0 31%,
-    rgba(117, 96, 65, 0.055) 31% 42%,
+    rgba(91, 119, 136, 0.03) 31% 42%,
     transparent 42% 53%,
-    rgba(117, 96, 65, 0.035) 53% 58%,
+    rgba(91, 119, 136, 0.02) 53% 58%,
     transparent 58% 100%
   );
   filter: blur(8px);
@@ -993,17 +1066,14 @@ em {
 }
 
 .content-site .content-flow--dusk {
-  background:
-    radial-gradient(ellipse 38rem 48rem at 100% 18%, rgba(198, 185, 164, 0.3), transparent 72%),
-    radial-gradient(ellipse 34rem 44rem at 4% 78%, rgba(213, 198, 176, 0.24), transparent 74%),
-    linear-gradient(180deg, #f1f0ea 0%, #e9e7e0 100%);
+  background: transparent;
 }
 
 .content-site .content-flow--dusk::before {
   background-position:
     -13rem 10%,
     calc(100% + 10rem) 78%;
-  opacity: 0.12;
+  opacity: 0.06;
   transform: scaleX(-1);
 }
 
@@ -1542,7 +1612,7 @@ em {
   position: relative;
   width: 100%;
   padding: clamp(5rem, 9vw, 9rem) 0;
-  background: var(--ink);
+  background: #081f5c;
   color: var(--paper);
   scroll-margin-top: 4.75rem;
 }
@@ -1669,7 +1739,7 @@ em {
 .property-ecosystem {
   margin-top: clamp(2.5rem, 5vw, 4rem);
   padding: clamp(1.75rem, 3.5vw, 2.75rem);
-  background: #f1f2ef;
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 1.35rem;
 }
 
@@ -1842,7 +1912,7 @@ em {
 .content-contact {
   width: 100%;
   padding: clamp(6rem, 10vw, 10rem) 0;
-  background: #e7e5de;
+  background: transparent;
   scroll-margin-top: 4.75rem;
 }
 
@@ -1882,7 +1952,7 @@ em {
 
 .content-contact-panel {
   padding: clamp(1.75rem, 3.5vw, 2.75rem);
-  background: #f4f3ee;
+  background: rgba(255, 255, 255, 0.76);
   border-radius: 1.35rem;
   box-shadow:
     0.7rem 1.5rem 3.8rem rgba(61, 52, 39, 0.09),
@@ -1980,7 +2050,7 @@ em {
 
 .contact-form {
   padding: clamp(1.75rem, 3.5vw, 2.75rem);
-  background: #f4f3ee;
+  background: rgba(255, 255, 255, 0.76);
   border-radius: 1.35rem;
   box-shadow:
     0.7rem 1.5rem 3.8rem rgba(61, 52, 39, 0.09),
@@ -2186,7 +2256,7 @@ em {
 .site-footer {
   width: 100%;
   padding: clamp(3rem, 5vw, 4.5rem) 0 clamp(2.5rem, 4vw, 3.5rem);
-  background: #e3e1d9;
+  background: transparent;
   border-top: 1px solid rgba(21, 21, 21, 0.12);
 }
 
@@ -2247,6 +2317,42 @@ em {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.16em;
+}
+
+/* Ces gris profonds gardent le texte courant au-dessus de 4,5:1 jusque dans
+   la zone bleue la plus soutenue du champ atmosphérique. */
+.content-hero-location,
+.property-manifesto-copy p,
+.property-section-intro,
+.property-card > p,
+.property-metrics dd,
+.property-universes-intro,
+.property-universe-list p,
+.property-building-intro,
+.property-building-column p,
+.property-levels-copy p,
+.property-feature-intro,
+.property-brands-copy p,
+.property-ecosystem p,
+.property-heritage-head p,
+.property-timeline span,
+.content-contact-lead > p:last-child,
+.contact-form-lead,
+.contact-form--sent p:last-child,
+.site-footer-brand address {
+  color: var(--copy);
+}
+
+.content-hero-copy .hero-kicker,
+.content-flow .property-eyebrow,
+.content-contact .property-eyebrow,
+.property-card-index,
+.property-universe-list span,
+.contact-channels > li > span,
+.contact-form-required,
+.site-footer-nav a,
+.site-footer-legal {
+  color: var(--copy-muted);
 }
 
 /* --- Adaptations ---------------------------------------------------------- */
