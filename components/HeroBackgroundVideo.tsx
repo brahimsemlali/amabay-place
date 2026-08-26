@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type SyntheticEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { MuxBackgroundVideo } from "@mux/mux-background-video/react";
 
 const PLAYBACK_ID = "VrkTpWt1JIszAvNxrEE1qNaOcl8hS3n8t2gY021U4KZc";
@@ -21,8 +21,21 @@ function Poster() {
   );
 }
 
-export function HeroBackgroundVideo({ className = "" }: { className?: string }) {
-  const [motionAllowed, setMotionAllowed] = useState(false);
+export function HeroBackgroundVideo({
+  className = "",
+  onReady,
+}: {
+  className?: string;
+  onReady?: () => void;
+}) {
+  const [motionAllowed, setMotionAllowed] = useState<boolean | null>(null);
+  const readyNotified = useRef(false);
+
+  const notifyReady = useCallback(() => {
+    if (readyNotified.current) return;
+    readyNotified.current = true;
+    onReady?.();
+  }, [onReady]);
 
   const startPlayback = (event: SyntheticEvent<HTMLVideoElement>) => {
     const video = event.currentTarget;
@@ -41,6 +54,15 @@ export function HeroBackgroundVideo({ className = "" }: { className?: string }) 
     return () => preference.removeEventListener("change", updatePreference);
   }, []);
 
+  useEffect(() => {
+    if (motionAllowed === false) notifyReady();
+  }, [motionAllowed, notifyReady]);
+
+  const handleCanPlay = (event: SyntheticEvent<HTMLVideoElement>) => {
+    startPlayback(event);
+    notifyReady();
+  };
+
   return (
     <div className={`hero-video ${className}`} aria-hidden="true">
       {motionAllowed ? (
@@ -48,9 +70,9 @@ export function HeroBackgroundVideo({ className = "" }: { className?: string }) 
           className="mux-hero-player"
           src={STREAM_URL}
           maxResolution="1080p"
-          preload="metadata"
+          preload="auto"
           onLoadedMetadata={startPlayback}
-          onCanPlay={startPlayback}
+          onCanPlay={handleCanPlay}
         >
           <Poster />
         </MuxBackgroundVideo>

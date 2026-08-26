@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import atriumLowAngleImage from "@/assets/images/amabay-atrium-low-angle.webp";
+import catchmentMapImage from "@/assets/images/amabay-catchment-map.png";
 import floorPlansImage from "@/assets/images/amabay-place-floor-plans.webp";
 import nightImage from "@/assets/images/amabay-place-night.webp";
 import interiorImage from "@/assets/images/amabay-place-interior.webp";
@@ -14,7 +15,6 @@ import plazaCafeImage from "@/assets/images/amabay-plaza-cafe.webp";
 import plazaFountainsImage from "@/assets/images/amabay-plaza-fountains.webp";
 import sitePlanImage from "@/assets/images/amabay-site-plan.webp";
 import tenantAtriumImage from "@/assets/images/amabay-tenant-atrium.webp";
-import tenantCornerFacadeImage from "@/assets/images/amabay-tenant-corner-facade.webp";
 import tenantFacadeFrontImage from "@/assets/images/amabay-tenant-facade-front.webp";
 import tenantFacadeLandscapeImage from "@/assets/images/amabay-tenant-facade-landscape.webp";
 import tenantFountainBridgeImage from "@/assets/images/amabay-tenant-fountain-bridge.webp";
@@ -29,6 +29,7 @@ import {
 } from "@/data/amabayContent";
 import { ContactForm } from "./ContactForm";
 import { HeroBackgroundVideo } from "./HeroBackgroundVideo";
+import { SitePreloader } from "./SitePreloader";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
@@ -50,9 +51,9 @@ const sectionMedia: Record<string, Media> = {
     alt: "Accès, stationnements et parvis paysager autour d’AMABAY PLACE",
   },
   catchment: {
-    src: tenantCornerFacadeImage,
-    alt: "AMABAY PLACE au cœur d’un bassin de vie majeur du Grand Casablanca",
-    objectPosition: "center 62%",
+    src: catchmentMapImage,
+    alt: "Carte des temps de trajet vers AMABAY PLACE depuis Casablanca, l’aéroport Mohammed V, Mohammedia, Bouznika, Rabat, Settat et le littoral",
+    fit: "contain",
   },
   visibility: {
     src: tenantFacadeFrontImage,
@@ -178,6 +179,8 @@ export function AmabayExperience() {
   const root = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [heroMediaReady, setHeroMediaReady] = useState(false);
+  const [preloaderActive, setPreloaderActive] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -187,11 +190,11 @@ export function AmabayExperience() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    document.body.style.overflow = menuOpen || preloaderActive ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [menuOpen]);
+  }, [menuOpen, preloaderActive]);
 
   useGSAP(
     () => {
@@ -397,7 +400,17 @@ export function AmabayExperience() {
   const hasEmail = contactDetails.email.length > 0;
 
   return (
-    <main ref={root} className="site-shell content-site">
+    <>
+      <SitePreloader
+        mediaReady={heroMediaReady}
+        onComplete={() => setPreloaderActive(false)}
+      />
+      <main
+        ref={root}
+        className="site-shell content-site"
+        inert={preloaderActive}
+        aria-hidden={preloaderActive}
+      >
       <a className="skip-link" href="#main-content">
         Aller au contenu principal
       </a>
@@ -444,7 +457,10 @@ export function AmabayExperience() {
 
       <div id="main-content">
         <section id="top" className="content-hero" aria-labelledby="hero-title">
-          <HeroBackgroundVideo className="hero-media" />
+          <HeroBackgroundVideo
+            className="hero-media"
+            onReady={() => setHeroMediaReady(true)}
+          />
           <div className="hero-shade" aria-hidden="true" />
           <div className="content-hero-copy">
             <p className="hero-kicker">AMABAY PLACE</p>
@@ -882,6 +898,7 @@ export function AmabayExperience() {
           </div>
         </footer>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

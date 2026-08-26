@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lato, Playfair_Display } from "next/font/google";
+import { Bodoni_Moda, Lato, Playfair_Display } from "next/font/google";
 import { SITE_URL, finalCta, heroContent } from "@/data/amabayContent";
 import "./globals.css";
 
@@ -16,6 +16,15 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-playfair-display",
+});
+
+const bodoniModa = Bodoni_Moda({
+  weight: "variable",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-bodoni-moda",
+  axes: ["opsz"],
 });
 
 /**
@@ -88,7 +97,10 @@ const structuredData = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={`${lato.variable} ${playfairDisplay.variable}`}>
+    <html
+      lang="fr"
+      className={`${lato.variable} ${playfairDisplay.variable} ${bodoniModa.variable}`}
+    >
       <body>
         {children}
         <script
